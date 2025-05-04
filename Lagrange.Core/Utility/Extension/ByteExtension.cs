@@ -34,14 +34,19 @@ internal static class ByteExtension
     }
 
     public static string Hex(this byte[] bytes, bool lower = false, bool space = false)
-        => Hex(bytes.AsSpan(), lower, space);
+    {
+        Hex(bytes.AsSpan(), lower, space);
+    }
 
     public static string Hex(this Span<byte> bytes, bool lower = true, bool space = false)
-        => Hex((ReadOnlySpan<byte>)bytes, lower, space);
+    {
+        Hex((ReadOnlySpan<byte>)bytes, lower, space);
+    }
 
     public static string Hex(this ReadOnlySpan<byte> bytes, bool lower = true, bool space = false)
-        => space ? HexInternal<WithSpaceHexByteStruct>(bytes, lower) : HexInternal<NoSpaceHexByteStruct>(bytes, lower);
-
+    {
+        space ? HexInternal<WithSpaceHexByteStruct>(bytes, lower) : HexInternal<NoSpaceHexByteStruct>(bytes, lower);
+    }
     private static string HexInternal<TStruct>(ReadOnlySpan<byte> bytes, bool lower) where TStruct : struct, IHexByteStruct
     {
         if (bytes.Length == 0) return string.Empty;
@@ -50,7 +55,7 @@ internal static class ByteExtension
         int structSize = Marshal.SizeOf<TStruct>();
         if (structSize % 2 == 1) throw new ArgumentException($"{nameof(TStruct)}'s size of must be a multiple of 2, currently {structSize}");
 
-        int charCountPerByte = structSize / 2;  // 2 is the size of char
+        int charCountPerByte = structSize / 2;  
         string result = new string('\0', bytes.Length * charCountPerByte);
         var resultSpan = MemoryMarshal.CreateSpan(ref Unsafe.As<char, TStruct>(ref Unsafe.AsRef(in result.GetPinnableReference())), bytes.Length);
 
@@ -72,7 +77,7 @@ internal static class ByteExtension
         return hash.Hex(lower);
     }
 
-    // By Executor-Cheng https://github.com/KonataDev/Lagrange.Core/pull/344#pullrequestreview-2027515322
+    
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static uint ToCharsBuffer(byte value, uint casing = 0)
     {
